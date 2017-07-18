@@ -1,6 +1,7 @@
 package deadmc.app.materiallivewallpaper.service
 
 import android.graphics.Canvas
+import android.graphics.Color
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -9,7 +10,7 @@ import android.os.Handler
 import android.service.wallpaper.WallpaperService
 import android.util.Log
 import android.view.SurfaceHolder
-import deadmc.app.materiallivewallpaper.figure.Square
+import deadmc.app.materiallivewallpaper.figure.Triangle
 
 class MaterialWallpaperService : WallpaperService(), SensorEventListener {
 
@@ -105,10 +106,33 @@ class MaterialWallpaperService : WallpaperService(), SensorEventListener {
         }
 
         fun drawFigures(canvas:Canvas) {
-            val square = Square()
-            val baseX = width/2+x*20
-            val baseY = height/2+y*20
-            canvas.drawRect(baseX,baseY,baseX+200,baseY+200,square.paint)
+            drawSecondFigure(canvas)
+            drawFirstFigure(canvas)
+
+    }
+
+        fun drawFirstFigure(canvas:Canvas) {
+            val speed = 10f
+            val botX:Float = (width*0.3+x*speed).toFloat()
+            val botY:Float = (height+200+y*speed).toFloat()
+            val topX:Float = (width*1.3+x*speed).toFloat()
+            val topY:Float = (-200+y*speed).toFloat()
+            val midX:Float = (width+200+x*speed).toFloat()
+            val midY:Float = (height+200+y*speed).toFloat()
+            val triangle = Triangle()
+            triangle.drawFigure(canvas,topX,topY,botX,botY,midX,midY, Color.WHITE)
+        }
+
+        fun drawSecondFigure(canvas:Canvas) {
+            val speed = 12f
+            val botX:Float = (width*0.2+x*speed).toFloat()
+            val botY:Float = (height+200+y*speed).toFloat()
+            val topX:Float = (width*1.2+x*speed).toFloat()
+            val topY:Float = (-200+y*speed).toFloat()
+            val midX:Float = (width+200+x*speed).toFloat()
+            val midY:Float = (height+200+y*speed).toFloat()
+            val triangle = Triangle()
+            triangle.drawFigure(canvas,topX,topY,botX,botY,midX,midY, Color.BLUE)
         }
 
     }
