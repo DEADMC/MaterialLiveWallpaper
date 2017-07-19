@@ -19,6 +19,10 @@ class MaterialWallpaperService : WallpaperService(), SensorEventListener {
     var y = 0f
     var z = 0f
 
+    var curX = 0f
+    var curY = 0f
+    var curZ = 0f
+
 
     override fun onCreateEngine(): WallpaperService.Engine {
         return MaterialEngine()
@@ -53,9 +57,9 @@ class MaterialWallpaperService : WallpaperService(), SensorEventListener {
     private fun getAccelerometer(event: SensorEvent) {
         val values = event.values
         // Movement
-        x = values [0]
-        y = values [1]
-        z = values [2]
+        curX = values [0]*10
+        curY = values [1]*10
+        curZ = values [2]*10
 
         Log.v("event", x.toString() + " " + y + " " + z)
     }
@@ -100,39 +104,79 @@ class MaterialWallpaperService : WallpaperService(), SensorEventListener {
                     holder.unlockCanvasAndPost(canvas)
             }
             handler.removeCallbacks(drawRunner)
+
+
             if (visible) {
-                handler.postDelayed(drawRunner, 10)
+                handler.postDelayed(drawRunner, 20)
             }
+
         }
 
-        fun drawFigures(canvas:Canvas) {
+        fun drawFigures(canvas: Canvas) {
+            recalculateValues()
             drawSecondFigure(canvas)
             drawFirstFigure(canvas)
+            drawThirdFigure(canvas)
+            drawFourthFigure(canvas)
 
-    }
-
-        fun drawFirstFigure(canvas:Canvas) {
-            val speed = 10f
-            val botX:Float = (width*0.3+x*speed).toFloat()
-            val botY:Float = (height+200+y*speed).toFloat()
-            val topX:Float = (width*1.3+x*speed).toFloat()
-            val topY:Float = (-200+y*speed).toFloat()
-            val midX:Float = (width+200+x*speed).toFloat()
-            val midY:Float = (height+200+y*speed).toFloat()
-            val triangle = Triangle()
-            triangle.drawFigure(canvas,topX,topY,botX,botY,midX,midY, Color.WHITE)
         }
 
-        fun drawSecondFigure(canvas:Canvas) {
-            val speed = 12f
-            val botX:Float = (width*0.2+x*speed).toFloat()
-            val botY:Float = (height+200+y*speed).toFloat()
-            val topX:Float = (width*1.2+x*speed).toFloat()
-            val topY:Float = (-200+y*speed).toFloat()
-            val midX:Float = (width+200+x*speed).toFloat()
-            val midY:Float = (height+200+y*speed).toFloat()
+        fun recalculateValues() {
+            Log.e("tag","y ="+y+" curY = "+curY)
+            Log.e("tag","x ="+x+" curX = "+curX)
+            if (x-curX>0.01) x -= Math.abs(x-curX)/5
+            if (y-curY>0.01) y -= Math.abs(y-curY)/5
+            if (x-curX<-0.01) x += Math.abs(x-curX)/5
+            if (y-curY<-0.01) y += Math.abs(y-curY)/5
+
+        }
+
+        fun drawFirstFigure(canvas: Canvas) {
+            val speed = 1f
+            val botX: Float = (width * 0.3 + x * speed).toFloat()
+            val botY: Float = (height + 200 + y * speed).toFloat()
+            val topX: Float = (width * 1.3 + x * speed).toFloat()
+            val topY: Float = (-200 + y * speed).toFloat()
+            val midX: Float = (width + 200 + x * speed).toFloat()
+            val midY: Float = (height + 200 + y * speed).toFloat()
             val triangle = Triangle()
-            triangle.drawFigure(canvas,topX,topY,botX,botY,midX,midY, Color.BLUE)
+            triangle.drawFigure(canvas, topX, topY, botX, botY, midX, midY, Color.BLUE)
+        }
+
+        fun drawSecondFigure(canvas: Canvas) {
+            val speed = 1.2f
+            val botX: Float = (width * 0.2 + x * speed).toFloat()
+            val botY: Float = (height + 200 + y * speed).toFloat()
+            val topX: Float = (width * 1.2 + x * speed).toFloat()
+            val topY: Float = (-200 + y * speed).toFloat()
+            val midX: Float = (width + 200 + x * speed).toFloat()
+            val midY: Float = (height + 200 + y * speed).toFloat()
+            val triangle = Triangle()
+            triangle.drawFigure(canvas, topX, topY, botX, botY, midX, midY, Color.WHITE)
+        }
+
+        fun drawThirdFigure(canvas: Canvas) {
+            val speed = 1.2f
+            val botX: Float = (width * 0.2 + x * speed).toFloat()
+            val botY: Float = (height + 200 + y * speed).toFloat()
+            val topX: Float = (width * 1.4 + x * speed).toFloat()
+            val topY: Float = (-200 + y * speed).toFloat()
+            val midX: Float = (width + 200 + x * speed).toFloat()
+            val midY: Float = (height + 200 + y * speed).toFloat()
+            val triangle = Triangle()
+            triangle.drawFigure(canvas, topX, topY, botX, botY, midX, midY, Color.WHITE)
+        }
+
+        fun drawFourthFigure(canvas: Canvas) {
+            val speed = 1.2f
+            val botX: Float = (-0.2 * width + x * speed).toFloat()
+            val botY: Float = (height * 0.6 + y * speed).toFloat()
+            val topX: Float = (-0.2 * width + x * speed).toFloat()
+            val topY: Float = (height * 1.2 + y * speed).toFloat()
+            val midX: Float = (width * 1.2 + x * speed).toFloat()
+            val midY: Float = (height * 1.2 + y * speed).toFloat()
+            val triangle = Triangle()
+            triangle.drawFigure(canvas, topX, topY, botX, botY, midX, midY, Color.WHITE)
         }
 
     }
