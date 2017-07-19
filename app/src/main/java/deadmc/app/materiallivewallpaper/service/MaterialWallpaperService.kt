@@ -96,7 +96,7 @@ class MaterialWallpaperService : WallpaperService(), SensorEventListener {
             try {
                 canvas = holder.lockCanvas()
                 if (canvas != null) {
-                    canvas.drawARGB(255, 225, 225, 255)
+                    canvas.drawARGB(255, 255, 255, 255)
                     drawFigures(canvas)
                 }
             } finally {
@@ -107,7 +107,7 @@ class MaterialWallpaperService : WallpaperService(), SensorEventListener {
 
 
             if (visible) {
-                handler.postDelayed(drawRunner, 20)
+                handler.postDelayed(drawRunner, 10)
             }
 
         }
@@ -124,11 +124,18 @@ class MaterialWallpaperService : WallpaperService(), SensorEventListener {
         fun recalculateValues() {
             Log.e("tag","y ="+y+" curY = "+curY)
             Log.e("tag","x ="+x+" curX = "+curX)
+
             if (x-curX>0.01) x -= Math.abs(x-curX)/5
             if (y-curY>0.01) y -= Math.abs(y-curY)/5
             if (x-curX<-0.01) x += Math.abs(x-curX)/5
             if (y-curY<-0.01) y += Math.abs(y-curY)/5
 
+            /*
+            if (x-curX>0.01) x -= 2
+            if (y-curY>0.01) y -= 2
+            if (x-curX<-0.01) x += 2
+            if (y-curY<-0.01) y += 2
+            */
         }
 
         fun drawFirstFigure(canvas: Canvas) {
