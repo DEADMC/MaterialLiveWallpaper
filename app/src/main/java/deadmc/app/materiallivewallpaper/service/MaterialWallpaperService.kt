@@ -6,7 +6,6 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.os.Handler
 import android.service.wallpaper.WallpaperService
 import android.util.Log
 import android.view.SurfaceHolder
@@ -15,6 +14,9 @@ import deadmc.app.materiallivewallpaper.figure.Triangle
 class MaterialWallpaperService : WallpaperService(), SensorEventListener {
 
     lateinit var sensorManager: SensorManager
+
+    val TAG = this.javaClass.simpleName
+
     var x = 0f
     var y = 0f
     var z = 0f
@@ -22,6 +24,10 @@ class MaterialWallpaperService : WallpaperService(), SensorEventListener {
     var curX = 0f
     var curY = 0f
     var curZ = 0f
+
+
+
+
 
 
     override fun onCreateEngine(): WallpaperService.Engine {
@@ -57,9 +63,9 @@ class MaterialWallpaperService : WallpaperService(), SensorEventListener {
     private fun getAccelerometer(event: SensorEvent) {
         val values = event.values
         // Movement
-        curX = values [0]*10
-        curY = values [1]*10
-        curZ = values [2]*10
+        curX = values [0]*100
+        curY = values [1]*100
+        curZ = values [2]*100
 
         Log.v("event", x.toString() + " " + y + " " + z)
     }
@@ -69,17 +75,16 @@ class MaterialWallpaperService : WallpaperService(), SensorEventListener {
         private var visible = true
         var width: Int = 0
         var height: Int = 0
-        private val handler = Handler()
+        val secondTriangle = Triangle()
         private val drawRunner = Runnable { draw() }
 
         init {
-            handler.post(drawRunner)
+            Thread(drawRunner).start()
         }
 
         override fun onSurfaceDestroyed(holder: SurfaceHolder) {
             super.onSurfaceDestroyed(holder)
             this.visible = false
-            handler.removeCallbacks(drawRunner)
         }
 
         override fun onSurfaceChanged(holder: SurfaceHolder, format: Int,
@@ -93,21 +98,21 @@ class MaterialWallpaperService : WallpaperService(), SensorEventListener {
             Log.e("engine", "draw started")
             val holder = surfaceHolder
             var canvas: Canvas? = null
-            try {
-                canvas = holder.lockCanvas()
-                if (canvas != null) {
-                    canvas.drawARGB(255, 225, 225, 255)
-                    drawFigures(canvas)
+            while (visible) {
+                var startTime = System.currentTimeMillis()
+                try {
+                    canvas = holder.lockCanvas()
+                    if (canvas != null) {
+                        canvas.drawARGB(255, 225, 225, 255)
+                        drawFigures(canvas)
+                    }
+                } finally {
+                    if (canvas != null)
+                        holder.unlockCanvasAndPost(canvas)
                 }
-            } finally {
-                if (canvas != null)
-                    holder.unlockCanvasAndPost(canvas)
-            }
-            handler.removeCallbacks(drawRunner)
 
-
-            if (visible) {
-                handler.postDelayed(drawRunner, 20)
+                var time = System.currentTimeMillis() - startTime
+                Log.e(TAG,"execution time "+time)
             }
 
         }
@@ -115,19 +120,23 @@ class MaterialWallpaperService : WallpaperService(), SensorEventListener {
         fun drawFigures(canvas: Canvas) {
             recalculateValues()
             drawSecondFigure(canvas)
-            drawFirstFigure(canvas)
-            drawThirdFigure(canvas)
-            drawFourthFigure(canvas)
+            //drawFirstFigure(canvas)
+            //drawThirdFigure(canvas)
+            //drawFourthFigure(canvas)
 
         }
 
         fun recalculateValues() {
-            Log.e("tag","y ="+y+" curY = "+curY)
-            Log.e("tag","x ="+x+" curX = "+curX)
-            if (x-curX>0.01) x -= Math.abs(x-curX)/5
-            if (y-curY>0.01) y -= Math.abs(y-curY)/5
-            if (x-curX<-0.01) x += Math.abs(x-curX)/5
-            if (y-curY<-0.01) y += Math.abs(y-curY)/5
+            //Log.e("tag","y ="+y+" curY = "+curY)
+            //Log.e("tag","x ="+x+" curX = "+curX)
+            if (x-curX>5) x -= 5
+            if (y-curY>5) y -= 5
+            if (x-curX<-5) x += 5
+            if (y-curY<-5) y += 5
+
+            x = curX;
+            y = curY;
+            z = curZ
 
         }
 

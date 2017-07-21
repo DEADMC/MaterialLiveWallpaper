@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 
+
 /**
  * Created by adanilov on 18.07.2017.
  */
@@ -28,7 +29,6 @@ class Triangle {
         path.lineTo(botX,botY)
         path.lineTo(midX,midY)
         path.close()
-
         canvas.drawPath(path, paint)
         //canvas.drawRect()
     }
