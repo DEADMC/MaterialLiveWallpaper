@@ -114,7 +114,6 @@ class MaterialWallpaperService : WallpaperService(), SensorEventListener {
                 var time = System.currentTimeMillis() - startTime
                 Log.e(TAG,"execution time "+time)
             }
-
         }
 
         fun drawFigures(canvas: Canvas) {
