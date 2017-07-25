@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="deadmc.app.materiallivewallpaper">
+    package="app.deadmc.materiallivewallpaper">
 
     <application
         android:allowBackup="true"
