@@ -1,4 +1,4 @@
-package app.deadmc.activity
+package app.deadmc.materiallivewallpaper.activity
 
 import android.app.Activity
 import android.app.WallpaperManager
@@ -6,8 +6,8 @@ import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import deadmc.app.materiallivewallpaper.R
-import deadmc.app.materiallivewallpaper.service.MaterialWallpaperService
+import app.deadmc.materiallivewallpaper.R
+import app.deadmc.materiallivewallpaper.service.MaterialWallpaperService
 
 
 /**
