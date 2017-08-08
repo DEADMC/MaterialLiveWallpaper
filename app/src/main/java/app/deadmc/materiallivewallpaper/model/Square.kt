@@ -1,66 +1,112 @@
 package app.deadmc.materiallivewallpaper.model
 
-import app.deadmc.materiallivewallpaper.util.setColorARGB
+import android.opengl.GLES20
+import app.deadmc.materiallivewallpaper.renderer.ReadyRenderer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
-import javax.microedition.khronos.opengles.GL10
 
 
 /**
  * Created by adanilov on 26.07.2017.
  */
-class Square {
+class Square(renderer: ReadyRenderer) : Figure()  {
 
-    val size = 0.1f
-    /** The buffer holding the vertices  */
     private val vertexBuffer: FloatBuffer
 
-    /** The initial vertex definition  */
-    private val vertices = floatArrayOf(-1.0f, -1.0f, 0.0f, // Bottom Left
-            1.0f, -1.0f, 0.0f, // Bottom Right
-            -1.0f, 1.0f, 0.0f, // Top Left
-            1.0f, 1.0f, 0.0f  // Top Right
+    // Set color with red, green, blue and alpha (opacity) values
+    val color = floatArrayOf(0.63671875f, 0.76953125f, 0.22265625f, 1.0f)
+    val COORDS_PER_VERTEX = 3
+    /*
+    val triangleCoords = floatArrayOf(// in counterclockwise order:
+            0.0f, 0.622008459f, 0.0f, // top
+            -0.5f, -0.311004243f, 0.0f, // bottom left
+            0.5f, -0.311004243f, 0.0f  // bottom right
     )
+    */
 
-    /**
-     * The Square constructor.
+    val triangleCoords = floatArrayOf(
+            //first triangle
+            -1.0f, 1.0f, 0.0f, -1.0f, -1.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+            //second triangle
+            -1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 0.0f, 1.0f, 1.0f, 0.0f)
+    private var mProgram: Int = 0
+    private var mPositionHandle: Int = 0
+    private var mColorHandle: Int = 0
+    private var mMVPMatrixHandle: Int = 0
 
-     * Initiate the buffers.
-     */
+    private val vertexCount = triangleCoords.size / COORDS_PER_VERTEX
+    private val vertexStride = COORDS_PER_VERTEX * 4 // 4 bytes per vertex
+
+
     init {
-        //
-        val byteBuf = ByteBuffer.allocateDirect(vertices.size * 4)
-        byteBuf.order(ByteOrder.nativeOrder())
-        vertexBuffer = byteBuf.asFloatBuffer()
-        vertexBuffer.put(vertices)
+        // initialize vertex byte buffer for shape coordinates
+        val bb = ByteBuffer.allocateDirect(
+                // (number of coordinate values * 4 bytes per float)
+                triangleCoords.size * 4)
+        // use the device hardware's native byte order
+        bb.order(ByteOrder.nativeOrder())
+
+        // create a floating point buffer from the ByteBuffer
+        vertexBuffer = bb.asFloatBuffer()
+        // add the coordinates to the FloatBuffer
+        vertexBuffer.put(triangleCoords)
+        // set the buffer to read the first coordinate
         vertexBuffer.position(0)
+
+
+        val vertexShader = renderer.loadShader(GLES20.GL_VERTEX_SHADER,
+                vertexShaderCode)
+        val fragmentShader = renderer.loadShader(GLES20.GL_FRAGMENT_SHADER,
+                fragmentShaderCode)
+
+        // create empty OpenGL ES Program
+        mProgram = GLES20.glCreateProgram()
+
+        // add the vertex shader to program
+        GLES20.glAttachShader(mProgram, vertexShader)
+
+        // add the fragment shader to program
+        GLES20.glAttachShader(mProgram, fragmentShader)
+
+        // creates OpenGL ES program executables
+        GLES20.glLinkProgram(mProgram)
+
+
     }
 
-    /**
-     * The object own drawing function. Called from the renderer to redraw this
-     * instance with possible changes in values.
+    fun draw(mvpMatrix:FloatArray) {
+        // Add program to OpenGL ES environment
+        GLES20.glUseProgram(mProgram);
 
-     * @param gl
-     * *            - The GL context
-     */
-    fun draw(gl: GL10) {
-        // Set the face rotation
+        // get handle to vertex shader's vPosition member
+        mPositionHandle = GLES20.glGetAttribLocation(mProgram, "vPosition");
 
-        gl.glFrontFace(GL10.GL_CCW)
+        // Enable a handle to the triangle vertices
+        GLES20.glEnableVertexAttribArray(mPositionHandle)
 
-        setColorARGB(gl,"#FFFFFF00")
-        // Point to our vertex buffer
-        gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer)
+        // Prepare the triangle coordinate data
+        GLES20.glVertexAttribPointer(mPositionHandle, COORDS_PER_VERTEX,
+                GLES20.GL_FLOAT, false,
+                vertexStride, vertexBuffer);
 
-        // Enable vertex buffer
-        gl.glEnableClientState(GL10.GL_VERTEX_ARRAY)
+        // get handle to fragment shader's vColor member
+        mColorHandle = GLES20.glGetUniformLocation(mProgram, "vColor");
 
-        gl.glScalef(size,size, 1f)
-        // Draw the vertices as triangle strip
-        gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, vertices.size / 3)
+        // Set color for drawing the triangle
+        GLES20.glUniform4fv(mColorHandle, 1, color, 0)
 
-        // Disable the client state before leaving
-        gl.glDisableClientState(GL10.GL_VERTEX_ARRAY)
+        mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix")
+
+        GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0);
+
+
+        // Draw the triangle
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexCount)
+
+        // Disable vertex array
+        GLES20.glDisableVertexAttribArray(mPositionHandle);
+
     }
+
 }
