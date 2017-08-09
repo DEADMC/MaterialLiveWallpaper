@@ -8,6 +8,7 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.opengl.GLSurfaceView
 import android.service.wallpaper.WallpaperService
+import android.util.Log
 import android.view.SurfaceHolder
 import app.deadmc.materiallivewallpaper.renderer.MaterialRenderer
 
@@ -76,7 +77,7 @@ abstract class ReadyWallpaperService : WallpaperService() {
         }
 
         override fun onSensorChanged(event: SensorEvent?) {
-
+            Log.e(TAG,"called ReadyWallpaperService")
             renderer?.onSensorChanged(event)
             /*
             if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {

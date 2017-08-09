@@ -1,16 +1,28 @@
 package app.deadmc.materiallivewallpaper.renderer
 
+import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.opengl.GLES20
 import android.opengl.Matrix
 import android.util.Log
 import app.deadmc.materiallivewallpaper.model.Square
+import java.util.*
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
+
+
 
 class MaterialRenderer : ReadyRenderer() {
 
     val squareArrayList = ArrayList<Square>()
+    val offset = 2.4f
+    val defaultX = -11f
+    val defaultY = -20f
+    var lastUpdate = 0L
+    var lastX = 0f
+    var lastY = 0f
+    var lastZ = 0f
+    val SHAKE_THRESHOLD = 800
 
     init {
 
@@ -21,9 +33,19 @@ class MaterialRenderer : ReadyRenderer() {
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
 
-
+        var x = 0f
+        var y = 0f
         for (i in 1..440) {
-            squareArrayList.add(Square(this@MaterialRenderer))
+            val square = Square(this@MaterialRenderer)
+            square.scale = 0.1f
+            if (x > offset*15f) {
+                x = 0f
+                y+=offset
+            }
+            square.sourceX = x+defaultX
+            square.sourceY = y+defaultY
+            x+=offset
+            squareArrayList.add(square)
         }
 
     }
@@ -52,28 +74,17 @@ class MaterialRenderer : ReadyRenderer() {
         //Matrix.glTranslatef(-1.5f, -2.6f, -6.0f)
         //Matrix.translateM(mMVPMatrix,0,0.1f,0.1f,0.1f)
         drawSquares()
-        Log.e("MaterialRenderer", "onDrawFrame")
+        //
+        // Log.e("MaterialRenderer", "onDrawFrame")
 
 
     }
 
 
     fun drawSquares() {
-        val offset = 2.4f
-        var x = 0f
-        var y = 0f
-
         squareArrayList.forEach {
-            it.translateX = x
-            it.translateY = y
-            it.scale = 0.1f
-            it.draw() // Draw the square
-            x+=offset
 
-            if (x > offset*15f) {
-                x = 0f
-                y+=offset
-            }
+            it.draw()
         }
 
     }
@@ -87,7 +98,32 @@ class MaterialRenderer : ReadyRenderer() {
     }
 
     fun onSensorChanged(event: SensorEvent?) {
+        Log.e("tag","called ")
+        if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
+            val x = event.values[0]
+            val y = event.values[1]
+            val z = event.values[2]
+            val curTime = System.currentTimeMillis()
+            if (curTime - lastUpdate > 100) {
+                val diffTime = curTime - lastUpdate
+                lastUpdate = curTime
 
+                val speed = Math.abs(x + y + z - lastX - lastY - lastZ) / diffTime * 10000
+                Log.e("tag","speed "+speed)
+                if (speed > SHAKE_THRESHOLD) {
+                    squareArrayList.forEach {
+
+                        it.translateX = Random().nextFloat()
+                        it.translateY = Random().nextFloat()
+                    }
+                }
+
+                lastX = x
+                lastY = y
+                lastZ = z
+            }
+
+        }
     }
 
 

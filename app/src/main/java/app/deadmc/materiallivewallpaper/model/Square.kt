@@ -49,8 +49,10 @@ class Square(renderer: ReadyRenderer) : Figure(renderer)  {
     }
 
     fun draw() {
+        slowTranslate()
         Matrix.scaleM(mMVPMatrix,0,scale,scale,1f)
-        Matrix.translateM(mMVPMatrix, 0, translateX, translateY, 0f)
+        Matrix.translateM(mMVPMatrix, 0, sourceX+translateX, sourceY+translateY, 0f)
+        //unchanged painting start
         GLES20.glUseProgram(mProgram)
         mPositionHandle = GLES20.glGetAttribLocation(mProgram, "vPosition")
         GLES20.glEnableVertexAttribArray(mPositionHandle)
@@ -63,8 +65,11 @@ class Square(renderer: ReadyRenderer) : Figure(renderer)  {
         GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0)
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexCount)
         GLES20.glDisableVertexAttribArray(mPositionHandle)
-        Matrix.translateM(mMVPMatrix, 0, -translateX, -translateY, 0f)
+        //unchanged painting end
+        Matrix.translateM(mMVPMatrix, 0, -translateX-sourceX, -translateY-sourceY, 0f)
         Matrix.scaleM(mMVPMatrix,0,1/scale,1/scale,1f)
     }
+
+
 
 }
