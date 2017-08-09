@@ -89,15 +89,7 @@ class MaterialRenderer : ReadyRenderer() {
 
     }
 
-
-
-
-
-    fun release() {
-        // TODO stuff to release
-    }
-
-    fun onSensorChanged(event: SensorEvent?) {
+    override fun onSensorChanged(event: SensorEvent?) {
         Log.e("tag","called ")
         if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
             val x = event.values[0]
@@ -113,8 +105,8 @@ class MaterialRenderer : ReadyRenderer() {
                 if (speed > SHAKE_THRESHOLD) {
                     squareArrayList.forEach {
 
-                        it.translateX = Random().nextFloat()
-                        it.translateY = Random().nextFloat()
+                        it.translateX = (Random().nextFloat()-0.5f)*16
+                        it.translateY = (Random().nextFloat()-0.5f)*16
                     }
                 }
 

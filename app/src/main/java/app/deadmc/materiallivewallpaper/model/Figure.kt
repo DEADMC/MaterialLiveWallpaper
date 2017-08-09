@@ -11,6 +11,8 @@ open class Figure(renderer: ReadyRenderer) {
     var translateY = 0f
     var sourceX = 0f
     var sourceY = 0f
+    var speedX = 0.2f
+    var speedY = 0.2f
 
     val vertexShaderCode =
             "uniform mat4 uMVPMatrix;" +
@@ -32,30 +34,32 @@ open class Figure(renderer: ReadyRenderer) {
     }
 
     fun slowTranslate() {
+        speedX = Math.abs(translateX)/16
         if (translateX > 0) {
-            if (translateX - 0.01f > 0)
-                translateX -= 0.01f
+            if (translateX - speedX > 0)
+                translateX -= speedX
             else
                 translateX = 0f
         }
 
         if (translateX < 0) {
-            if (translateX + 0.01f < 0)
-                translateX += 0.01f
+            if (translateX + speedX < 0)
+                translateX += speedX
             else
                 translateX = 0f
         }
 
+        speedY = Math.abs(translateY)/16
         if (translateY > 0) {
-            if (translateY - 0.01f > 0)
-                translateY -= 0.01f
+            if (translateY - speedY > 0)
+                translateY -= speedY
             else
                 translateY = 0f
         }
 
         if (translateY < 0) {
-            if (translateY + 0.01f < 0)
-                translateY += 0.01f
+            if (translateY + speedY< 0)
+                translateY += speedY
             else
                 translateY = 0f
         }

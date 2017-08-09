@@ -1,13 +1,10 @@
 package app.deadmc.materiallivewallpaper.renderer
 
+import android.hardware.SensorEvent
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import javax.microedition.khronos.opengles.GL10
 
-
-/**
- * Created by adanilov on 08.08.2017.
- */
 abstract class ReadyRenderer : GLSurfaceView.Renderer {
 
     val mMVPMatrix = FloatArray(16)
@@ -18,14 +15,16 @@ abstract class ReadyRenderer : GLSurfaceView.Renderer {
     /**
      * If the surface changes, reset the view
      */
-    override fun onSurfaceChanged(gl: GL10, width: Int, height: Int) {
-        var height = height
+    override fun onSurfaceChanged(gl: GL10, width: Int, heightPass: Int) {
+        var height = heightPass
         if (height == 0) { // Prevent A Divide By Zero By
             height = 1 // Making Height Equal One
         }
 
         GLES20.glViewport(0, 0, width, height)
     }
+
+    abstract fun onSensorChanged(event: SensorEvent?)
 
     fun loadShader(type: Int, shaderCode: String): Int {
 
@@ -36,6 +35,10 @@ abstract class ReadyRenderer : GLSurfaceView.Renderer {
         GLES20.glCompileShader(shader)
 
         return shader
+    }
+
+    fun release() {
+        // TODO stuff to release
     }
 
 }

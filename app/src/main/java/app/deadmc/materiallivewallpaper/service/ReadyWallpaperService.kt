@@ -1,6 +1,5 @@
 package app.deadmc.materiallivewallpaper.service
 
-
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -10,7 +9,7 @@ import android.opengl.GLSurfaceView
 import android.service.wallpaper.WallpaperService
 import android.util.Log
 import android.view.SurfaceHolder
-import app.deadmc.materiallivewallpaper.renderer.MaterialRenderer
+import app.deadmc.materiallivewallpaper.renderer.ReadyRenderer
 
 
 abstract class ReadyWallpaperService : WallpaperService() {
@@ -21,12 +20,11 @@ abstract class ReadyWallpaperService : WallpaperService() {
         return WallpaperEngine()
     }
 
-    abstract fun getNewRenderer(): GLSurfaceView.Renderer
+    abstract fun getNewRenderer(): ReadyRenderer
 
-    inner class WallpaperEngine : WallpaperService.Engine(),SensorEventListener {
-        var renderer: MaterialRenderer? = null
+    inner class WallpaperEngine : WallpaperService.Engine(), SensorEventListener {
+        var renderer: ReadyRenderer? = null
         lateinit private var glSurfaceView: WallpaperGLSurfaceView
-        private var rendererHasBeenSet: Boolean = false
         lateinit var sensorManager: SensorManager
 
         override fun onCreate(surfaceHolder: SurfaceHolder?) {
@@ -34,23 +32,22 @@ abstract class ReadyWallpaperService : WallpaperService() {
             glSurfaceView = WallpaperGLSurfaceView(this@ReadyWallpaperService)
             glSurfaceView.setEGLContextClientVersion(2)
             glSurfaceView.preserveEGLContextOnPause = true
-           // glSurfaceView.renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
-
-            glSurfaceView.setRenderer(getNewRenderer())
+            // glSurfaceView.renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
+            renderer = getNewRenderer()
+            glSurfaceView.setRenderer(renderer)
         }
 
         override fun onVisibilityChanged(visible: Boolean) {
             super.onVisibilityChanged(visible)
 
-            if (rendererHasBeenSet) {
-                if (visible) {
-                    glSurfaceView.onResume()
-                    onResume()
-                } else {
-                    glSurfaceView.onPause()
-                    onPause()
-                }
+            if (visible) {
+                glSurfaceView.onResume()
+                onResume()
+            } else {
+                glSurfaceView.onPause()
+                onPause()
             }
+
         }
 
         fun onResume() {
@@ -58,6 +55,7 @@ abstract class ReadyWallpaperService : WallpaperService() {
             sensorManager.registerListener(this,
                     sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                     SensorManager.SENSOR_DELAY_GAME)
+            Log.e(TAG, "onResume() called")
         }
 
         fun onPause() {
@@ -77,7 +75,6 @@ abstract class ReadyWallpaperService : WallpaperService() {
         }
 
         override fun onSensorChanged(event: SensorEvent?) {
-            Log.e(TAG,"called ReadyWallpaperService")
             renderer?.onSensorChanged(event)
             /*
             if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
@@ -85,6 +82,8 @@ abstract class ReadyWallpaperService : WallpaperService() {
             }
             */
         }
+
+
 
         internal inner class WallpaperGLSurfaceView(context: Context) : GLSurfaceView(context) {
 
