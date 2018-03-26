@@ -64,6 +64,7 @@ class Triangle(renderer: ReadyRenderer) : Figure(renderer){
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexCount)
         GLES20.glDisableVertexAttribArray(mPositionHandle)
 
+
     }
 
 }

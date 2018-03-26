@@ -35,9 +35,9 @@ open class Square(renderer: ReadyRenderer, triangleCoords:FloatArray = squareCoo
         vertexBuffer.position(0)
 
         val vertexShader = renderer.loadShader(GLES20.GL_VERTEX_SHADER,
-                vertexShaderCode)
+                vertexBlurShaderCode)
         val fragmentShader = renderer.loadShader(GLES20.GL_FRAGMENT_SHADER,
-                fragmentShaderCode)
+                fragmenBlurShaderCode)
         mProgram = GLES20.glCreateProgram()
         GLES20.glAttachShader(mProgram, vertexShader)
         GLES20.glAttachShader(mProgram, fragmentShader)

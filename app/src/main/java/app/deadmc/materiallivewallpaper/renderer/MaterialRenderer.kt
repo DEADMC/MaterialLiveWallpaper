@@ -5,8 +5,8 @@ import android.hardware.SensorEvent
 import android.opengl.GLES20
 import android.opengl.Matrix
 import android.util.Log
-import app.deadmc.materiallivewallpaper.model.Cube
 import app.deadmc.materiallivewallpaper.model.Figure
+import app.deadmc.materiallivewallpaper.model.Square
 import java.util.*
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -37,7 +37,7 @@ class MaterialRenderer : ReadyRenderer() {
         var x = 0f
         var y = 0f
         for (i in 1..440) {
-            val square = Cube(this@MaterialRenderer)
+            val square = Square(this@MaterialRenderer)
             square.scale = 0.1f
             if (x > offset*15f) {
                 x = 0f
@@ -91,7 +91,7 @@ class MaterialRenderer : ReadyRenderer() {
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
-        Log.e("tag","called ")
+        //Log.e("tag","called ")
         if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
             val x = event.values[0]
             val y = event.values[1]
@@ -102,7 +102,7 @@ class MaterialRenderer : ReadyRenderer() {
                 lastUpdate = curTime
 
                 val speed = Math.abs(x + y + z - lastX - lastY - lastZ) / diffTime * 10000
-                Log.e("tag","speed "+speed)
+                //Log.e("tag","speed "+speed)
                 if (speed > SHAKE_THRESHOLD) {
                     squareArrayList.forEach {
 
