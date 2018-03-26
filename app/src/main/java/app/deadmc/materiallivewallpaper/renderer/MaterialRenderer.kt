@@ -5,7 +5,8 @@ import android.hardware.SensorEvent
 import android.opengl.GLES20
 import android.opengl.Matrix
 import android.util.Log
-import app.deadmc.materiallivewallpaper.model.Square
+import app.deadmc.materiallivewallpaper.model.Cube
+import app.deadmc.materiallivewallpaper.model.Figure
 import java.util.*
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -14,7 +15,7 @@ import javax.microedition.khronos.opengles.GL10
 
 class MaterialRenderer : ReadyRenderer() {
 
-    val squareArrayList = ArrayList<Square>()
+    val squareArrayList = ArrayList<Figure>()
     val offset = 2.4f
     val defaultX = -11f
     val defaultY = -20f
@@ -36,7 +37,7 @@ class MaterialRenderer : ReadyRenderer() {
         var x = 0f
         var y = 0f
         for (i in 1..440) {
-            val square = Square(this@MaterialRenderer)
+            val square = Cube(this@MaterialRenderer)
             square.scale = 0.1f
             if (x > offset*15f) {
                 x = 0f

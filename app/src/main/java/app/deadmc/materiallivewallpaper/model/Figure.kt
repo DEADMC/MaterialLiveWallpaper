@@ -2,7 +2,7 @@ package app.deadmc.materiallivewallpaper.model
 
 import app.deadmc.materiallivewallpaper.renderer.ReadyRenderer
 
-open class Figure(renderer: ReadyRenderer) {
+abstract class Figure(renderer: ReadyRenderer) {
 
     val renderer : ReadyRenderer
     val mMVPMatrix : FloatArray
@@ -66,6 +66,7 @@ open class Figure(renderer: ReadyRenderer) {
 
     }
 
+    abstract fun draw()
 
 
 

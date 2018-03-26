@@ -3,11 +3,12 @@ package app.deadmc.materiallivewallpaper.model
 import android.opengl.GLES20
 import android.opengl.Matrix
 import app.deadmc.materiallivewallpaper.renderer.ReadyRenderer
+import app.deadmc.materiallivewallpaper.util.squareCoords
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
 
-class Square(renderer: ReadyRenderer) : Figure(renderer)  {
+open class Square(renderer: ReadyRenderer, triangleCoords:FloatArray = squareCoords) : Figure(renderer)  {
 
     private val vertexBuffer: FloatBuffer
 
@@ -15,18 +16,13 @@ class Square(renderer: ReadyRenderer) : Figure(renderer)  {
     val color = floatArrayOf(0.63671875f, 0.76953125f, 0.22265625f, 1.0f)
     val COORDS_PER_VERTEX = 3
 
-    val triangleCoords = floatArrayOf(
-            //first triangle
-            -1.0f, 1.0f, 0.0f, -1.0f, -1.0f, 0.0f, 1.0f, 1.0f, 0.0f,
-            //second triangle
-            -1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 0.0f, 1.0f, 1.0f, 0.0f)
 
     private var mProgram: Int = 0
     private var mPositionHandle: Int = 0
     private var mColorHandle: Int = 0
     private var mMVPMatrixHandle: Int = 0
 
-    private val vertexCount = triangleCoords.size / COORDS_PER_VERTEX
+    private val vertexCount:Int = triangleCoords.size / COORDS_PER_VERTEX
     private val vertexStride = COORDS_PER_VERTEX * 4 // 4 bytes per vertex
 
 
@@ -48,7 +44,7 @@ class Square(renderer: ReadyRenderer) : Figure(renderer)  {
         GLES20.glLinkProgram(mProgram)
     }
 
-    fun draw() {
+    override fun draw() {
         slowTranslate()
         Matrix.scaleM(mMVPMatrix,0,scale,scale,1f)
         Matrix.translateM(mMVPMatrix, 0, sourceX+translateX, sourceY+translateY, 0f)

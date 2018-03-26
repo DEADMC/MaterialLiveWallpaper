@@ -46,7 +46,7 @@ class Triangle(renderer: ReadyRenderer) : Figure(renderer){
         GLES20.glLinkProgram(mProgram)
     }
 
-    fun draw(mvpMatrix:FloatArray) {
+    override fun draw() {
         GLES20.glUseProgram(mProgram)
         mPositionHandle = GLES20.glGetAttribLocation(mProgram, "vPosition")
         GLES20.glEnableVertexAttribArray(mPositionHandle)
@@ -58,7 +58,7 @@ class Triangle(renderer: ReadyRenderer) : Figure(renderer){
 
         mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix")
 
-        GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0)
+        GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0)
 
 
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexCount)
